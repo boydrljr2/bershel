@@ -44,22 +44,14 @@ function checkGuess(guessWord) {
         gameOver = false;
         for (let i = currentGuessRound * 5; i < (currentGuessRound * 5) + 5; i++) {
             if (letters[i] === secretArray[i-(currentGuessRound*5)].letter) {
-                console.log("i: ", letters[i], " secretArray[i-(etc)].letter: ", secretArray[i-(currentGuessRound*5)].letter);
-                console.log("exact match")
                 document.getElementById(i).style.backgroundColor = 'var(--color-green-main)';
                 document.getElementById(i).style.color = 'var(--color-white)';
                 secretArray[i-(currentGuessRound*5)].matched = true;
             } else {
                 for (let j = 0; j < secretArray.length; j++) {
                     if (letters[i] !== secretArray[j].letter) {
-                        console.log(" letters[i] ", letters[i], " secret[j].letter: " , secretArray[j].letter, " secret[j].matched: ", secretArray[j].matched)
-                        console.log("no match")
                     } else if (letters[i] === secretArray[j].letter && secretArray[j].matched === true) {
-                        console.log(" letters[i] ", letters[i], " secret[j].letter: " , secretArray[j].letter, " secret[j].matched: ", secretArray[j].matched)
-                        console.log("already matched")
                     } else if (letters[i] === secretArray[j].letter && secretArray[j].matched === false) {
-                        console.log(" letters[i] ", letters[i], " secret[j].letter: " , secretArray[j].letter, " secret[j].matched: ", secretArray[j].matched)
-                        console.log("new match")
                         document.getElementById(i).style.backgroundColor = 'var(--color-gold-main)';
                         document.getElementById(i).style.color = 'var(--color-white)';
                         secretArray[j].matched = true;
@@ -92,8 +84,6 @@ async function takeAGuess() {
     });
     const wordResp = await resp.json();
     
-    console.log("wordResp?: ", wordResp);
-    
     if (!wordResp.validWord) {
         setUserMsg('<h3>Nope, thats not a word.</h3>');
         return;
@@ -114,7 +104,6 @@ async function takeAGuess() {
 }
 
 function handleBackspace(e) {
-    console.log("handleBackspace: ", e.target.id);
     let entry = document.getElementById(e.target.id);
     if (entry.readOnly) { return; }
     const index =  parseInt(e.target.id);
@@ -215,10 +204,35 @@ async function getSecretWord() {
     setUserMsg('<h3>Use TAB to move and ENTER to guess</h3>');
 }
 
+function revealSecret() {
+    console.log("revealSecret: ", systemMsg);
+    systemMsg.style.backgroundColor = '#ddd';
+}
+
+function reLoad() {
+    location.reload();
+}
+
 function initializeWordMaster() {
+    systemMsg.style.color = '#fff';
+    systemMsg.style.backgroundColor = '#fff';
     getSecretWord();
     setUserMsg('<h3>Go ahead. Give it your best shot!</h3>');
     makeGuessesVisible();
+
+    document
+        .getElementById('btn-new-game')
+        .addEventListener('click', function handleNewGame(e) {
+            e.preventDefault();
+            reLoad();
+        });
+
+    document
+        .getElementById('btn-secret')
+        .addEventListener('click', function handleSecret(e) {
+            e.preventDefault(); 
+            revealSecret();
+        });
 
     /* Add the event listener to the entire document */
     document
