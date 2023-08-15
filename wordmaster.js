@@ -200,8 +200,13 @@ async function getSecretWord() {
     const response = await promise.json();
     secretWord = response.word.toUpperCase();
     puzzleNumber = response.puzzleNumber;
+
+    setTimeout(function() {
+        setUserMsg('<h3>TAB to move. ENTER to guess</h3>')
+    }, 4000);
+
     setSystemMsg('<p>Secret Word: ' + secretWord + ' Puzzle: ' + puzzleNumber + '</p>');
-    setUserMsg('<h3>Use TAB to move and ENTER to guess</h3>');
+//    setUserMsg('<h3>TAB to move. ENTER to guess</h3>');
 }
 
 function revealSecret() {
