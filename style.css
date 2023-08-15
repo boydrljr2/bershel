@@ -79,6 +79,7 @@ header {
 }
 
 .btn:hover {
+    cursor: pointer;
     background-color: var(--color-green-dark);
 }
 
