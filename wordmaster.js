@@ -202,6 +202,7 @@ async function getSecretWord() {
     puzzleNumber = response.puzzleNumber;
 
     setTimeout(function() {
+        console.log("getSecretWord: setTimeout")
         setUserMsg('<h3>TAB to move. ENTER to guess</h3>')
     }, 4000);
 
