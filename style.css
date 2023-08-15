@@ -1,0 +1,63 @@
+:root {
+    --color-green-main: forestgreen;
+    --color-gold-main: gold;
+    --color-red-main: #b83b5e;
+    --color-gray-light: #f4f4f4;
+    --color-gray-dark: #222;
+    --color-text-main: #333;
+    --color-text-secret: #ddd;
+    --color-white: #fff;
+}
+
+html {
+    box-sizing: border-box;
+    font-family: sans-serif;
+    color: var(--color-text-main);
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+.container {
+    width: 400px;
+    margin: 50px auto;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-gray-dark);
+}
+
+header {
+    text-align: center;
+}
+
+.user-message {
+    text-align: center;
+}
+
+.guesses {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.guess {
+    display: flex;
+    flex-direction: row nowrap;
+    justify-content: space-between;
+    margin: 10px 15px;
+}
+
+.letter {
+    width: 12%;
+    margin: auto;
+    padding: 10px;
+    font-size: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--color-gray-dark);
+    text-transform: uppercase;
+}
+
+.system-message {
+    color: var(--color-text-secret);
+    text-align: center; 
+}
+
