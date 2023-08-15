@@ -195,7 +195,7 @@ function setUserMsg(msg) {
 
 async function getSecretWord() {
     // Instead of a waiting spinner, how about a user msg?
-    setUserMsg('<h3>Getting a secret word...</h3>');
+    setUserMsg('<h3>Anytime some says the Secret Word...</h3>');
     const promise = await fetch(secretWordURL);
     const response = await promise.json();
     secretWord = response.word.toUpperCase();
@@ -223,7 +223,7 @@ function initializeWordMaster() {
     systemMsg.style.color = '#fff';
     systemMsg.style.backgroundColor = '#fff';
     getSecretWord();
-    setUserMsg('<h3>Go ahead. Give it your best shot!</h3>');
+    setUserMsg('<h3>Anytime some says the Secret Word...</h3>');
     makeGuessesVisible();
 
     document
