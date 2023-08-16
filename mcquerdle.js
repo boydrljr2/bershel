@@ -223,7 +223,7 @@ function initializeWordMaster() {
     systemMsg.style.color = '#fff';
     systemMsg.style.backgroundColor = '#fff';
     getSecretWord();
-    setUserMsg('<h3>Anytime some says the Secret Word...</h3>');
+    setUserMsg('<h3>Anytime someone says the Secret Word...</h3>');
     makeGuessesVisible();
 
     document
