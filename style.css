@@ -57,6 +57,16 @@ header {
     text-transform: uppercase;
 }
 
+.letter-exact {
+    background-color: var(--color-green-main);
+    color: var(--color-white);
+}
+
+.letter-nearly {
+    background-color: var(--color-gold-main);
+    color: var(--color-gray-dark);
+}
+
 .system-message {
     color: var(--color-text-secret);
     text-align: center; 

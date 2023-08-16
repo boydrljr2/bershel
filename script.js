@@ -1,40 +1,40 @@
 // Set some game variables
-const wordLength = 5;
-const maxGuesses = 6;
+const WORDLENGTH = 5;
+const MAXGUESSES = 6;
 let secretWord = ""; 
 let puzzleNumber = 0;
 let guessWord = "";
 let gameOver = false; 
 let currentGuessRound = 0;
 let letters = [];
-let secretArray = [];
 
 // Set API URLs for the secret word
-let secretWordURL = "https://words.dev-apis.com/word-of-the-day?random=1";
-let validateGuessWordURL = "https://words.dev-apis.com/validate-word";
+const SECRETWORDURL = "https://words.dev-apis.com/word-of-the-day?random=1";
+const VALIDATEGUESSWORDURL = "https://words.dev-apis.com/validate-word";
 
 // Get DOM element handles
-let userMsg = document.querySelector('.user-message');
-let systemMsg = document.querySelector('.system-message');
+const userMsg = document.querySelector('.user-message');
+const systemMsg = document.querySelector('.system-message');
 systemMsg.style.color = 'var(--color-white)';
-let guess0 = document.getElementById('guess0');
-let guess1 = document.getElementById('guess1');
-let guess2 = document.getElementById('guess2');
-let guess3 = document.getElementById('guess3');
-let guess4 = document.getElementById('guess4');
-let guess5 = document.getElementById('guess5');
+const guess0 = document.getElementById('guess0');
+const guess1 = document.getElementById('guess1');
+const guess2 = document.getElementById('guess2');
+const guess3 = document.getElementById('guess3');
+const guess4 = document.getElementById('guess4');
+const guess5 = document.getElementById('guess5');
 
 function checkGuess(guessWord) {
+
     const secretArray = [
         {letter: secretWord[0], matched : false},
         {letter: secretWord[1], matched : false},
         {letter: secretWord[2], matched : false},
         {letter: secretWord[3], matched : false},
         {letter: secretWord[4], matched : false},
-    ]
+    ];
 
     if (guessWord === secretWord) {
-        for (let i = currentGuessRound * 5; i < (currentGuessRound * 5) + 5; i++) {
+        for (let i = currentGuessRound * WORDLENGTH; i < (currentGuessRound * WORDLENGTH) + WORDLENGTH; i++) {
             document.getElementById(i).style.backgroundColor = 'var(--color-green-main)';
             document.getElementById(i).style.color = 'var(--color-white)';
         }
@@ -44,44 +44,41 @@ function checkGuess(guessWord) {
     
     if (guessWord !== secretWord){
         gameOver = false;
-        for (let i = currentGuessRound * wordLength; i < (currentGuessRound * wordLength) + wordLength; i++) {
-            if (letters[i] === secretArray[i-(currentGuessRound * wordLength)].letter) {
+        for (let i = currentGuessRound * WORDLENGTH; i < (currentGuessRound * WORDLENGTH) + WORDLENGTH; i++) {
+            if (letters[i] === secretArray[i-(currentGuessRound * WORDLENGTH)].letter) {
                 document.getElementById(i).style.backgroundColor = 'var(--color-green-main)';
                 document.getElementById(i).style.color = 'var(--color-white)';
                 secretArray[i-(currentGuessRound*5)].matched = true;
             } else {
                 for (let j = 0; j < secretArray.length; j++) {
-                    if (letters[i] !== secretArray[j].letter) {
-                    } else if (letters[i] === secretArray[j].letter && secretArray[j].matched === true) {
-                    } else if (letters[i] === secretArray[j].letter && secretArray[j].matched === false) {
+                    if (letters[i] === secretArray[j].letter && secretArray[j].matched === false) {
+                        //document.getElementById(i).classList.add('letter-exact'); // this would be nicer but is buggy?
                         document.getElementById(i).style.backgroundColor = 'var(--color-gold-main)';
                         document.getElementById(i).style.color = 'var(--color-white)';
                         secretArray[j].matched = true;
-                    } else {
-                        console.log("something else");
+                        } else {
+                            //do nothing
+                        } 
                     }
                 }
             }
-        }
+        };
         return gameOver;
-    }
 }
 
 function assembleGuessWord() {
-    let guessWord = "";
-    for (let i = currentGuessRound * wordLength; i < (currentGuessRound * wordLength) + wordLength; i++) {
+    guessWord = "";
+    for (let i = currentGuessRound * WORDLENGTH; i < (currentGuessRound * WORDLENGTH) + WORDLENGTH; i++) {
         guessWord += letters[i];
     }
     return guessWord;
 }
 
 async function takeAGuess() {
-    console.log("takeAGuess: ", currentGuessRound)
-    const guessWord =  assembleGuessWord();
-    console.log("takeAGuess: guessWord: ", guessWord);
+    guessWord =  assembleGuessWord();
     setUserMsg('<h3>Checking your guess...</h3>');
 
-    const resp = await fetch(validateGuessWordURL, {
+    const resp = await fetch(VALIDATEGUESSWORDURL, {
         method: 'POST',
         body: JSON.stringify({word : guessWord}),
     });
@@ -107,16 +104,15 @@ async function takeAGuess() {
 }
 
 function handleBackspace(e) {
-    let entry = document.getElementById(e.target.id);
+    const entry = document.getElementById(e.target.id);
     if (entry.readOnly) { return; }
     const index =  parseInt(e.target.id);
     letters[index] = "";
     entry.value = "";
-    console.log("letters: ",letters);
 }
 
 function addLetter(letter, id) {
-    let entry = document.getElementById(id);
+    const entry = document.getElementById(id);
     letter = letter.toUpperCase();
     const index =  parseInt(id);
     letters[index] = letter;
@@ -187,7 +183,7 @@ function setUserMsg(msg) {
 async function getSecretWord() {
     // Instead of a waiting spinner, how about a user msg?
     setUserMsg('<h3>Anytime some says the Secret Word...</h3>');
-    const promise = await fetch(secretWordURL);
+    const promise = await fetch(SECRETWORDURL);
     const response = await promise.json();
     secretWord = response.word.toUpperCase();
     puzzleNumber = response.puzzleNumber;
@@ -210,7 +206,7 @@ function reLoad() {
     location.reload();
 }
 
-function initializeWordMaster() {
+function initializeMcquerdle() {
     systemMsg.style.color = '#fff';
     systemMsg.style.backgroundColor = '#fff';
     getSecretWord();
@@ -268,4 +264,4 @@ function initializeWordMaster() {
     );
 }
 
-initializeWordMaster();
+initializeMcquerdle();
