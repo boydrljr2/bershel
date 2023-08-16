@@ -74,8 +74,9 @@ function assembleGuessWord() {
 }
 
 async function takeAGuess() {
-
+    console.log("takeAGuess: ", currentGuessRound)
     const guessWord =  assembleGuessWord();
+    console.log("takeAGuess: guessWord: ", guessWord);
     setUserMsg('<h3>Checking your guess...</h3>');
 
     const resp = await fetch(validateGuessWordURL, {
@@ -246,12 +247,10 @@ function initializeWordMaster() {
             //if gameOver do nothing after a keypress
             if (gameOver) { return; } 
 
+            
             //if key press is ENTER then assemble the guess word and check it
-            if (e.key === "Tab" || e.key === "Shift" || e.key === "Alt" || e.key === "Control"  ) {
-                return;
-            } else if (e.key === "Escape" || e.key === "Delete" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "ArrowUp" || e.key === "ArrowDown") {
-                return; 
-            } else if (e.key === "Backspace") {
+            if (e.key === "Backspace") {
+                e.preventDefault();
                 handleBackspace(e);
             } else if (e.key === "Enter") {
                 e.preventDefault();
@@ -259,11 +258,53 @@ function initializeWordMaster() {
             } else if (!isLetter(e.key)) {
                 e.preventDefault();
                 setUserMsg('<h3>Only letters [A-Z] are allowed!</h3>') 
+            } else if (e.key === "Tab" ) {
+                // e.preventDefault(); 
+                return;
+            } else if (e.key.length > 1) { 
+                // ignores 'shift', arrow keys, End, Home, etc.
+                e.preventDefault();
+                return;
             } else if (isLetter(e.key)) {
+                e.preventDefault();
                 addLetter(e.key, e.target.id);
                 setUserMsg('<h3>Keep going.</h3>');
-                }
-            }
+            } else { console.log("handleKeyPress ran out of options: ", e.key); }
+            
+
+           /* Switch statement does not work; addLetter is not called?
+           switch (e.key) {
+                case 'Enter' :
+                    e.preventDefault();
+                    takeAGuess();
+                    break;
+                case 'Backspace' :
+                    e.preventDefault();
+                    handleBackspace(e);
+                    setUserMsg('<h3>Backing up...</h3>')
+                    break;
+                case 'Tab' :
+                    break;
+                case (e.key.length > 1) :
+                    e.preventDefault();
+                    setUserMsg('<h3>Only letters [A-Z] are allowed!</h3>')
+                    break;
+                case (isLetter(e.key)) :
+                    e.preventDefault();
+                    addLetter(e.key, e.target.id);
+                    setUserMsg('<h3>OK...</h3>');
+                    break;
+                case (!isLetter(e.key)) :
+                    e.preventDefault();
+                    setUserMsg('<h3>Only letters [A-Z] are allowed!</h3>')
+                    break;
+                default:
+                    break;
+           }
+           */
+           
+           
+        }
     );
 }
 
