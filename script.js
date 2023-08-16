@@ -1,4 +1,6 @@
 // Set some game variables
+const wordLength = 5;
+const maxGuesses = 6;
 let secretWord = ""; 
 let puzzleNumber = 0;
 let guessWord = "";
@@ -42,8 +44,8 @@ function checkGuess(guessWord) {
     
     if (guessWord !== secretWord){
         gameOver = false;
-        for (let i = currentGuessRound * 5; i < (currentGuessRound * 5) + 5; i++) {
-            if (letters[i] === secretArray[i-(currentGuessRound*5)].letter) {
+        for (let i = currentGuessRound * wordLength; i < (currentGuessRound * wordLength) + wordLength; i++) {
+            if (letters[i] === secretArray[i-(currentGuessRound * wordLength)].letter) {
                 document.getElementById(i).style.backgroundColor = 'var(--color-green-main)';
                 document.getElementById(i).style.color = 'var(--color-white)';
                 secretArray[i-(currentGuessRound*5)].matched = true;
@@ -67,7 +69,7 @@ function checkGuess(guessWord) {
 
 function assembleGuessWord() {
     let guessWord = "";
-    for (let i = currentGuessRound * 5; i < (currentGuessRound * 5) + 5; i++) {
+    for (let i = currentGuessRound * wordLength; i < (currentGuessRound * wordLength) + wordLength; i++) {
         guessWord += letters[i];
     }
     return guessWord;
@@ -119,11 +121,9 @@ function addLetter(letter, id) {
     const index =  parseInt(id);
     letters[index] = letter;
     if (entry.readOnly) {
-        console.log("addLetter entry.readOnly: ", entry.value);
         return;
     } else if (!entry.readOnly) {
         entry.value = letter;
-        console.log("addLetter !entry.readOnly: ",entry.value);
     }
 }
 
@@ -147,34 +147,24 @@ function makeGuessesVisible() {
             child.readOnly = true;
         };
         guess1.style.visibility = "visible"; 
-        guess2.style.visibility = "hidden";
-        guess3.style.visibility = "hidden";
-        guess4.style.visibility = "hidden";
-        guess5.style.visibility = "hidden";
     } else if (currentGuessRound === 2) { 
         // set all the children of id=guess1 to readonly = true
         for (const child of guess1.children) {
             child.readOnly = true;
         };
         guess2.style.visibility = "visible";
-        guess3.style.visibility = "hidden";
-        guess4.style.visibility = "hidden";
-        guess5.style.visibility = "hidden";
     } else if (currentGuessRound === 3) { 
         // set all the children of id=guess2 to readonly = true
         for (const child of guess2.children) {
             child.readOnly = true;
         };
         guess3.style.visibility = "visible";
-        guess4.style.visibility = "hidden";
-        guess5.style.visibility = "hidden";
     } else if (currentGuessRound === 4) {
         // set all the children of id=guess3 to readonly = true
         for (const child of guess3.children) {
             child.readOnly = true;
         };
         guess4.style.visibility = "visible";
-        guess5.style.visibility = "hidden";
     } else if (currentGuessRound === 5) {
         // set all the children of id=guess4 to readonly = true
         for (const child of guess4.children) {
@@ -269,41 +259,11 @@ function initializeWordMaster() {
                 e.preventDefault();
                 addLetter(e.key, e.target.id);
                 setUserMsg('<h3>Keep going.</h3>');
-            } else { console.log("handleKeyPress ran out of options: ", e.key); }
+            } else { 
+                // do nothing
+                console.log("handleKeyPress ran out of options: ", e.key); 
+            }
             
-
-           /* Switch statement does not work; addLetter is not called?
-           switch (e.key) {
-                case 'Enter' :
-                    e.preventDefault();
-                    takeAGuess();
-                    break;
-                case 'Backspace' :
-                    e.preventDefault();
-                    handleBackspace(e);
-                    setUserMsg('<h3>Backing up...</h3>')
-                    break;
-                case 'Tab' :
-                    break;
-                case (e.key.length > 1) :
-                    e.preventDefault();
-                    setUserMsg('<h3>Only letters [A-Z] are allowed!</h3>')
-                    break;
-                case (isLetter(e.key)) :
-                    e.preventDefault();
-                    addLetter(e.key, e.target.id);
-                    setUserMsg('<h3>OK...</h3>');
-                    break;
-                case (!isLetter(e.key)) :
-                    e.preventDefault();
-                    setUserMsg('<h3>Only letters [A-Z] are allowed!</h3>')
-                    break;
-                default:
-                    break;
-           }
-           */
-           
-           
         }
     );
 }
