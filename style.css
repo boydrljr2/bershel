@@ -4,7 +4,7 @@
     --color-gold-main: gold;
     --color-red-main: #b83b5e;
     --color-gray-light: #f4f4f4;
-    --color-gray-dark: #222;
+    --color-gray-dark: #AAA;
     --color-text-main: #333;
     --color-text-secret: #ddd;
     --color-white: #fff;
@@ -57,6 +57,11 @@ header {
     text-transform: uppercase;
 }
 
+.letter-not {
+    background-color: var(--color-gray-dark);
+    color: var(--color-white);
+}
+
 .letter-exact {
     background-color: var(--color-green-main);
     color: var(--color-white);
@@ -64,7 +69,7 @@ header {
 
 .letter-nearly {
     background-color: var(--color-gold-main);
-    color: var(--color-gray-dark);
+    color: var(--color-white);
 }
 
 .system-message {

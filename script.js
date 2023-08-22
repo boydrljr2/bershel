@@ -1,6 +1,6 @@
 // Set some game variables
 const WORDLENGTH = 5;
-const MAXGUESSES = 6;
+const MAXGUESSES = 5;
 let secretWord = ""; 
 let puzzleNumber = 0;
 let guessWord = "";
@@ -35,8 +35,7 @@ function checkGuess(guessWord) {
 
     if (guessWord === secretWord) {
         for (let i = currentGuessRound * WORDLENGTH; i < (currentGuessRound * WORDLENGTH) + WORDLENGTH; i++) {
-            document.getElementById(i).style.backgroundColor = 'var(--color-green-main)';
-            document.getElementById(i).style.color = 'var(--color-white)';
+            document.getElementById(i).classList.add('letter-exact');
         }
         gameOver = true;
         return gameOver;
@@ -46,18 +45,15 @@ function checkGuess(guessWord) {
         gameOver = false;
         for (let i = currentGuessRound * WORDLENGTH; i < (currentGuessRound * WORDLENGTH) + WORDLENGTH; i++) {
             if (letters[i] === secretArray[i-(currentGuessRound * WORDLENGTH)].letter) {
-                document.getElementById(i).style.backgroundColor = 'var(--color-green-main)';
-                document.getElementById(i).style.color = 'var(--color-white)';
-                secretArray[i-(currentGuessRound*5)].matched = true;
+                document.getElementById(i).classList.add('letter-exact');
+                secretArray[i-(currentGuessRound * WORDLENGTH)].matched = true;
             } else {
                 for (let j = 0; j < secretArray.length; j++) {
                     if (letters[i] === secretArray[j].letter && secretArray[j].matched === false) {
-                        //document.getElementById(i).classList.add('letter-exact'); // this would be nicer but is buggy?
-                        document.getElementById(i).style.backgroundColor = 'var(--color-gold-main)';
-                        document.getElementById(i).style.color = 'var(--color-white)';
+                        document.getElementById(i).classList.add('letter-nearly'); 
                         secretArray[j].matched = true;
                         } else {
-                            //do nothing
+                            document.getElementById(i).classList.add('letter-not');
                         } 
                     }
                 }
@@ -78,29 +74,40 @@ async function takeAGuess() {
     guessWord =  assembleGuessWord();
     setUserMsg('<h3>Checking your guess...</h3>');
 
-    const resp = await fetch(VALIDATEGUESSWORDURL, {
-        method: 'POST',
-        body: JSON.stringify({word : guessWord}),
-    });
-    const wordResp = await resp.json();
-    
-    if (!wordResp.validWord) {
-        setUserMsg('<h3>Nope, thats not a word.</h3>');
-        return;
-    } else if (wordResp.validWord) {
-        checkGuess(guessWord);
-    }
-    if (!gameOver && currentGuessRound === 5) {
-        setUserMsg('<h3>Waa Waa! Refresh your browser... </h3>');
-    } else if (!gameOver && currentGuessRound < 5) {
-        currentGuessRound++;
-        makeGuessesVisible();
-        setUserMsg('<h3>Guess again!</h3>');
-    } else if (gameOver) {
-        setUserMsg('<h3>You win! </h3>');
-        setSystemMsg('<h3>Refresh your browser to Play Again </h3>');
-        return;
-    }
+    try {
+        const resp = await fetch(VALIDATEGUESSWORDURL, {
+            method: 'POST',
+            body: JSON.stringify({word : guessWord}),
+        });
+        if (!resp.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const wordResp = await resp.json();
+
+        if (!wordResp.validWord) {
+            setUserMsg('<h3>Nope, thats not a word.</h3>');
+            return;
+        } else if (wordResp.validWord) {
+            checkGuess(guessWord);
+        }
+        
+        if (!gameOver && currentGuessRound === MAXGUESSES) {
+            setUserMsg('<h3>Waa Waa! Click New to try again. </h3>');
+            return;
+        } else if (!gameOver && currentGuessRound < MAXGUESSES) {
+            currentGuessRound++;
+            makeGuessesVisible();
+            setUserMsg('<h3>Guess again!</h3>');
+            return;
+        } else if (gameOver) {
+            setUserMsg('<h3>You win! </h3>');
+            setSystemMsg('<h3>Refresh your browser to Play Again </h3>');
+            return;
+        }
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+        setUserMsg('<h3>There was a problem validating your Guess Word</h3>');
+    }   
 }
 
 function handleBackspace(e) {
@@ -182,24 +189,32 @@ function setUserMsg(msg) {
 
 async function getSecretWord() {
     // Instead of a waiting spinner, how about a user msg?
-    setUserMsg('<h3>Anytime some says the Secret Word...</h3>');
-    const promise = await fetch(SECRETWORDURL);
-    const response = await promise.json();
-    secretWord = response.word.toUpperCase();
-    puzzleNumber = response.puzzleNumber;
+    setUserMsg('<h3>Anytime someone says the Secret Word...</h3>');
+
+    try {
+        const promise = await fetch(SECRETWORDURL);
+        if (!promise.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const response = await promise.json();
+        secretWord = response.word.toUpperCase();
+        puzzleNumber = response.puzzleNumber;
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+        setUserMsg('<h3>Problem getting the Secret Word</h3>');
+    }
 
     setTimeout(function() {
         console.log("getSecretWord: setTimeout")
         setUserMsg('<h3>TAB to move. ENTER to guess</h3>')
     }, 4000);
-
     setSystemMsg('<p>Secret Word: ' + secretWord + ' Puzzle: ' + puzzleNumber + '</p>');
-//    setUserMsg('<h3>TAB to move. ENTER to guess</h3>');
+
 }
 
 function revealSecret() {
     console.log("revealSecret: ", systemMsg);
-    systemMsg.style.backgroundColor = '#ddd';
+    systemMsg.style.backgroundColor = 'var(--color-gray-light)';
 }
 
 function reLoad() {
@@ -207,8 +222,9 @@ function reLoad() {
 }
 
 function initializeMcquerdle() {
-    systemMsg.style.color = '#fff';
-    systemMsg.style.backgroundColor = '#fff';
+    // Initialize the game
+    systemMsg.style.color = 'var(--color-white)';
+    systemMsg.style.backgroundColor = 'var(--color-white)';
     getSecretWord();
     setUserMsg('<h3>Anytime someone says the Secret Word...</h3>');
     makeGuessesVisible();
@@ -264,4 +280,5 @@ function initializeMcquerdle() {
     );
 }
 
+// This initializes the game
 initializeMcquerdle();
