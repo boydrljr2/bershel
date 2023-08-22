@@ -85,7 +85,7 @@ async function takeAGuess() {
         const wordResp = await resp.json();
 
         if (!wordResp.validWord) {
-            setUserMsg('<h3>Nope, thats not a word.</h3>');
+            setUserMsg('<h3> - ' + guessWord + '- Nope, thats not a word.</h3>');
             return;
         } else if (wordResp.validWord) {
             checkGuess(guessWord);
